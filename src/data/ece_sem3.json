@@ -1,0 +1,62 @@
+{
+  "branch": "ECE",
+  "branchFullName": "Electronics & Communication Engineering",
+  "semester": 3,
+  "subjects": [
+    {
+      "code": "3EC1-02",
+      "name": "Technical Communication",
+      "credits": 2
+    },
+    {
+      "code": "3EC2-01",
+      "name": "Advanced Engineering Mathematics-I",
+      "credits": 3
+    },
+    {
+      "code": "3EC3-24",
+      "name": "Computer Programming Lab-I",
+      "credits": 1
+    },
+    {
+      "code": "3EC4-04",
+      "name": "Digital System Design",
+      "credits": 3
+    },
+    {
+      "code": "3EC4-05",
+      "name": "Signals & Systems",
+      "credits": 3
+    },
+    {
+      "code": "3EC4-06",
+      "name": "Network Theory",
+      "credits": 4
+    },
+    {
+      "code": "3EC4-07",
+      "name": "Electronic Devices",
+      "credits": 4
+    },
+    {
+      "code": "3EC4-21",
+      "name": "Electronic Devices Lab",
+      "credits": 1
+    },
+    {
+      "code": "3EC4-22",
+      "name": "Digital System Design Lab",
+      "credits": 1
+    },
+    {
+      "code": "3EC4-23",
+      "name": "Signal Processing Lab",
+      "credits": 1
+    },
+    {
+      "code": "3EC7-30",
+      "name": "Industrial Training",
+      "credits": 1
+    }
+  ]
+}

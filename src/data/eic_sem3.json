@@ -1,0 +1,62 @@
+{
+  "branch": "EIC",
+  "branchFullName": "Electronics Instrumentation & Control",
+  "semester": 3,
+  "subjects": [
+    {
+      "code": "3EI1-02",
+      "name": "Technical Communication",
+      "credits": 2
+    },
+    {
+      "code": "3EI2-01",
+      "name": "Advanced Engineering Mathematics-I",
+      "credits": 3
+    },
+    {
+      "code": "3EI3-24",
+      "name": "Computer Programming Lab-I",
+      "credits": 1
+    },
+    {
+      "code": "3EI4-04",
+      "name": "Digital System Design",
+      "credits": 3
+    },
+    {
+      "code": "3EI4-05",
+      "name": "Signals & Systems",
+      "credits": 3
+    },
+    {
+      "code": "3EI4-06",
+      "name": "Network Theory",
+      "credits": 4
+    },
+    {
+      "code": "3EI4-07",
+      "name": "Electronic Devices",
+      "credits": 4
+    },
+    {
+      "code": "3EI4-21",
+      "name": "Electronic Devices Lab",
+      "credits": 1
+    },
+    {
+      "code": "3EI4-22",
+      "name": "Digital System Design Lab",
+      "credits": 1
+    },
+    {
+      "code": "3EI4-23",
+      "name": "Signal Processing Lab",
+      "credits": 1
+    },
+    {
+      "code": "3EI7-30",
+      "name": "Industrial Training",
+      "credits": 1
+    }
+  ]
+}

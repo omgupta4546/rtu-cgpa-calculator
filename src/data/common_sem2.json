@@ -1,0 +1,57 @@
+{
+  "branch": "COMMON",
+  "branchFullName": "Common to all branches of UG Engineering & Technology",
+  "semester": 2,
+  "subjects": [
+    {
+      "code": "2FY2-01",
+      "name": "Engineering Mathematics-II",
+      "credits": 4
+    },
+    {
+      "code": "2FY2-02",
+      "name": "Engineering Physics",
+      "credits": 4
+    },
+    {
+      "code": "2FY1-04",
+      "name": "Communication Skills",
+      "credits": 2
+    },
+    {
+      "code": "2FY3-06",
+      "name": "Programming for Problem Solving",
+      "credits": 2
+    },
+    {
+      "code": "2FY3-08",
+      "name": "Basic Electrical Engineering",
+      "credits": 2
+    },
+    {
+      "code": "2FY2-20",
+      "name": "Engineering Physics Lab",
+      "credits": 1
+    },
+    {
+      "code": "2FY2-22",
+      "name": "Language Lab",
+      "credits": 1
+    },
+    {
+      "code": "2FY3-24",
+      "name": "Computer Programming Lab",
+      "credits": 1.5
+    },
+    {
+      "code": "2FY3-26",
+      "name": "Basic Electrical Engineering Lab",
+      "credits": 1
+    },
+    {
+      "code": "2FY3-28",
+      "name": "Computer Aided Engineering Graphics",
+      "credits": 1.5
+    }
+  ]
+}

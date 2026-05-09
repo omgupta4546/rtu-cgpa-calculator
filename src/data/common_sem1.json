@@ -1,0 +1,57 @@
+{
+  "branch": "COMMON",
+  "branchFullName": "Common to all branches of UG Engineering & Technology",
+  "semester": 1,
+  "subjects": [
+    {
+      "code": "1FY2-01",
+      "name": "Engineering Mathematics-I",
+      "credits": 4
+    },
+    {
+      "code": "1FY2-03",
+      "name": "Engineering Chemistry",
+      "credits": 4
+    },
+    {
+      "code": "1FY1-05",
+      "name": "Human Values",
+      "credits": 2
+    },
+    {
+      "code": "1FY3-07",
+      "name": "Basic Mechanical Engineering",
+      "credits": 2
+    },
+    {
+      "code": "1FY3-09",
+      "name": "Basic Civil Engineering",
+      "credits": 2
+    },
+    {
+      "code": "1FY2-21",
+      "name": "Engineering Chemistry Lab",
+      "credits": 1
+    },
+    {
+      "code": "1FY2-23",
+      "name": "Human Values Activities",
+      "credits": 1
+    },
+    {
+      "code": "1FY3-25",
+      "name": "Manufacturing Practices Workshop",
+      "credits": 1.5
+    },
+    {
+      "code": "1FY3-27",
+      "name": "Basic Civil Engineering Lab",
+      "credits": 1
+    },
+    {
+      "code": "1FY3-29",
+      "name": "Computer Aided Machine Drawing",
+      "credits": 1.5
+    }
+  ]
+}
