@@ -57,6 +57,11 @@
       "code": "3EI7-30",
       "name": "Industrial Training",
       "credits": 1
+    },
+    {
+      "code": "3EI0-FC",
+      "name": "Foundation Course",
+      "credits": 0.5
     }
   ]
 }

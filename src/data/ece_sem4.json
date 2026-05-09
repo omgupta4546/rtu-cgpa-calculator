@@ -14,11 +14,6 @@
       "credits": 2
     },
     {
-      "code": "4EC1-02",
-      "name": "Technical Communication",
-      "credits": 2
-    },
-    {
       "code": "4EC4-04",
       "name": "Analog Circuits",
       "credits": 3
@@ -57,6 +52,11 @@
       "code": "4EC4-24",
       "name": "Measurement & Instrumentation Lab",
       "credits": 1.5
+    },
+    {
+      "code": "4EC0-FC",
+      "name": "Foundation Course",
+      "credits": 0.5
     }
   ]
 }

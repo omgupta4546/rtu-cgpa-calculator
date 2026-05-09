@@ -11,8 +11,8 @@ const badgeColorCycle = ['blue', 'violet', 'indigo', 'purple', 'cyan', 'teal', '
 
 // Fixed credits per semester (common semesters)
 const FIXED_CREDITS = {
-  1: 20.5,
-  2: 20.5,
+  1: 21,
+  2: 21,
 };
 
 const badgeColorMap = {

@@ -52,6 +52,11 @@
       "code": "2FY3-28",
       "name": "Computer Aided Engineering Graphics",
       "credits": 1.5
+    },
+    {
+      "code": "2FY0-FC",
+      "name": "Foundation Course",
+      "credits": 0.5
     }
   ]
 }

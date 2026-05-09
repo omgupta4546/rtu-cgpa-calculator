@@ -52,6 +52,11 @@
       "code": "1FY3-29",
       "name": "Computer Aided Machine Drawing",
       "credits": 1.5
+    },
+    {
+      "code": "1FY0-FC",
+      "name": "Foundation Course",
+      "credits": 0.5
     }
   ]
 }
