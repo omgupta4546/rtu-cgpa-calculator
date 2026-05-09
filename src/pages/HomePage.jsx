@@ -3,13 +3,13 @@ import { motion } from 'framer-motion';
 
 const features = [
   { icon: '📊', title: 'SGPA Calculator', desc: 'Calculate semester SGPA (1st, 2nd, 3rd) with official RTU formula', link: '/sgpa', color: 'from-indigo-500 to-blue-600' },
-  { icon: '📈', title: 'CGPA Calculator', desc: 'Weighted CGPA calculation up to 3rd semester', link: '/cgpa', color: 'from-purple-500 to-pink-600' },
+  { icon: '📈', title: 'CGPA Calculator', desc: 'Weighted CGPA calculation up to 4th semester', link: '/cgpa', color: 'from-purple-500 to-pink-600' },
   { icon: 'ℹ️', title: 'RTU Grading', desc: 'Learn about RTU official grading system', link: '/about', color: 'from-emerald-500 to-teal-600' },
 ];
 
 const stats = [
   { label: 'Branches', value: '2', icon: '🏛️' },
-  { label: 'Semesters', value: '3', icon: '📅' },
+  { label: 'Semesters', value: '4', icon: '📅' },
   { label: 'Subjects', value: '32', icon: '📚' },
   { label: 'Free Forever', value: '100%', icon: '💎' },
 ];

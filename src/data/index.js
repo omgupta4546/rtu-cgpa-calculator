@@ -12,7 +12,9 @@
 import commonSem1 from './common_sem1.json';
 import commonSem2 from './common_sem2.json';
 import eicSem3 from './eic_sem3.json';
+import eicSem4 from './eic_sem4.json';
 import eceSem3 from './ece_sem3.json';
+import eceSem4 from './ece_sem4.json';
 
 // Registry of all available branches
 export const branches = [
@@ -25,8 +27,8 @@ export const branches = [
 // Registry of available semesters per branch
 // Semesters 1 & 2 are common across all branches
 export const availableSemesters = {
-  EIC: [1, 2, 3],
-  ECE: [1, 2, 3],
+  EIC: [1, 2, 3, 4],
+  ECE: [1, 2, 3, 4],
   // Add more: CSE: [1, 2, 3, 4, 5],
 };
 
@@ -37,11 +39,13 @@ export const semesterData = {
     1: commonSem1,
     2: commonSem2,
     3: eicSem3,
+    4: eicSem4,
   },
   ECE: {
     1: commonSem1,
     2: commonSem2,
     3: eceSem3,
+    4: eceSem4,
   },
   // Add more:
   // CSE: { 1: commonSem1, 2: commonSem2, 3: cseSem3 },

@@ -1,0 +1,62 @@
+{
+  "branch": "ECE",
+  "branchFullName": "Electronics & Communication Engineering",
+  "semester": 4,
+  "subjects": [
+    {
+      "code": "4EC2-01",
+      "name": "Advance Engineering Mathematics-II",
+      "credits": 3
+    },
+    {
+      "code": "4EC1-03",
+      "name": "Managerial Economics And Financial Accounting",
+      "credits": 2
+    },
+    {
+      "code": "4EC1-02",
+      "name": "Technical Communication",
+      "credits": 2
+    },
+    {
+      "code": "4EC4-04",
+      "name": "Analog Circuits",
+      "credits": 3
+    },
+    {
+      "code": "4EC4-05",
+      "name": "Microcontrollers",
+      "credits": 3
+    },
+    {
+      "code": "4EC3-06",
+      "name": "Measurement & Instrumentation",
+      "credits": 3
+    },
+    {
+      "code": "4EC4-07",
+      "name": "Analog and Digital Communication",
+      "credits": 3
+    },
+    {
+      "code": "4EC4-21",
+      "name": "Analog and Digital Communication Lab",
+      "credits": 1.5
+    },
+    {
+      "code": "4EC4-22",
+      "name": "Analog Circuits Lab",
+      "credits": 1.5
+    },
+    {
+      "code": "4EC4-23",
+      "name": "Microcontrollers Lab",
+      "credits": 1.5
+    },
+    {
+      "code": "4EC4-24",
+      "name": "Measurement & Instrumentation Lab",
+      "credits": 1.5
+    }
+  ]
+}

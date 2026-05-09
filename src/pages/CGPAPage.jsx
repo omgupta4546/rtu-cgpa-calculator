@@ -2,68 +2,81 @@ import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import BranchSelector from '../components/BranchSelector';
 import ResultCard from '../components/ResultCard';
-import { branches, getTotalCredits } from '../data';
+import { branches, getTotalCredits, availableSemesters } from '../data';
 import { calculateCGPA } from '../utils/calculator';
 import { saveToStorage, loadFromStorage, STORAGE_KEYS } from '../utils/storage';
 
-const semesterLabels = ['1st', '2nd', '3rd'];
+const ordinalLabels = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th'];
+const badgeColorCycle = ['blue', 'violet', 'indigo', 'purple', 'cyan', 'teal', 'fuchsia', 'rose'];
 
-// Default credits per semester
-const DEFAULT_CREDITS_SEM1 = 20.5;
-const DEFAULT_CREDITS_SEM2 = 20.5;
+// Fixed credits per semester (common semesters)
+const FIXED_CREDITS = {
+  1: 20.5,
+  2: 20.5,
+};
+
+const badgeColorMap = {
+  blue: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300',
+  violet: 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300',
+  indigo: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300',
+  purple: 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300',
+  cyan: 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300',
+  teal: 'bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300',
+  fuchsia: 'bg-fuchsia-100 dark:bg-fuchsia-900/30 text-fuchsia-700 dark:text-fuchsia-300',
+  rose: 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300',
+};
 
 export default function CGPAPage() {
   const [selectedBranch, setSelectedBranch] = useState(() =>
     loadFromStorage(STORAGE_KEYS.SELECTED_BRANCH, '')
   );
 
-  const [sem1Sgpa, setSem1Sgpa] = useState(() => loadFromStorage(STORAGE_KEYS.SEM1_SGPA, ''));
-  const [sem2Sgpa, setSem2Sgpa] = useState(() => loadFromStorage(STORAGE_KEYS.SEM2_SGPA, ''));
-  const [sem3Sgpa, setSem3Sgpa] = useState(() => loadFromStorage('sem3_sgpa', ''));
+  // Dynamic SGPA state per semester (stored as object)
+  const [sgpaValues, setSgpaValues] = useState(() =>
+    loadFromStorage('cgpa_sgpa_values', {})
+  );
 
-  const [sem1Credits, setSem1Credits] = useState(() => loadFromStorage(STORAGE_KEYS.SEM1_CREDITS, DEFAULT_CREDITS_SEM1));
-  const [sem2Credits, setSem2Credits] = useState(() => loadFromStorage(STORAGE_KEYS.SEM2_CREDITS, DEFAULT_CREDITS_SEM2));
-  const [sem3Credits, setSem3Credits] = useState(() => loadFromStorage('sem3_credits', ''));
-
-  // Auto-set 3rd sem credits when branch changes
-  useEffect(() => {
-    if (selectedBranch) {
-      const credits3 = getTotalCredits(selectedBranch, 3);
-      if (credits3 > 0) {
-        setSem3Credits(credits3);
-        saveToStorage('sem3_credits', credits3);
-      }
-    }
+  // Get semesters for selected branch
+  const semesters = useMemo(() => {
+    if (!selectedBranch) return [];
+    return availableSemesters[selectedBranch] || [];
   }, [selectedBranch]);
 
-  // Persist inputs
-  useEffect(() => { saveToStorage(STORAGE_KEYS.SEM1_SGPA, sem1Sgpa); }, [sem1Sgpa]);
-  useEffect(() => { saveToStorage(STORAGE_KEYS.SEM2_SGPA, sem2Sgpa); }, [sem2Sgpa]);
-  useEffect(() => { saveToStorage('sem3_sgpa', sem3Sgpa); }, [sem3Sgpa]);
-  useEffect(() => { saveToStorage(STORAGE_KEYS.SEM1_CREDITS, sem1Credits); }, [sem1Credits]);
-  useEffect(() => { saveToStorage(STORAGE_KEYS.SEM2_CREDITS, sem2Credits); }, [sem2Credits]);
-  useEffect(() => { saveToStorage('sem3_credits', sem3Credits); }, [sem3Credits]);
+  // Get fixed credits for each semester
+  const semesterCredits = useMemo(() => {
+    const credits = {};
+    for (const sem of semesters) {
+      if (FIXED_CREDITS[sem]) {
+        credits[sem] = FIXED_CREDITS[sem];
+      } else if (selectedBranch) {
+        credits[sem] = getTotalCredits(selectedBranch, sem);
+      }
+    }
+    return credits;
+  }, [semesters, selectedBranch]);
 
-  // Semester input config
-  const semInputs = [
-    { label: '1st', sgpa: sem1Sgpa, setSgpa: setSem1Sgpa, credits: sem1Credits, setCredits: setSem1Credits, color: 'blue', num: 1 },
-    { label: '2nd', sgpa: sem2Sgpa, setSgpa: setSem2Sgpa, credits: sem2Credits, setCredits: setSem2Credits, color: 'violet', num: 2 },
-    { label: '3rd', sgpa: sem3Sgpa, setSgpa: setSem3Sgpa, credits: sem3Credits, setCredits: setSem3Credits, color: 'indigo', num: 3 },
-  ];
+  // Persist SGPA values
+  useEffect(() => {
+    saveToStorage('cgpa_sgpa_values', sgpaValues);
+  }, [sgpaValues]);
+
+  const setSgpa = (sem, value) => {
+    setSgpaValues(prev => ({ ...prev, [sem]: value }));
+  };
 
   // CGPA calculation
   const cgpaResult = useMemo(() => {
     const entries = [];
-    for (const sem of semInputs) {
-      const sgpa = parseFloat(sem.sgpa);
-      const credits = parseFloat(sem.credits);
-      if (!isNaN(sgpa) && sgpa > 0 && !isNaN(credits) && credits > 0) {
-        entries.push({ semester: sem.num, sgpa, totalCredits: credits });
+    for (const sem of semesters) {
+      const sgpa = parseFloat(sgpaValues[sem]);
+      const credits = semesterCredits[sem];
+      if (!isNaN(sgpa) && sgpa > 0 && credits > 0) {
+        entries.push({ semester: sem, sgpa, totalCredits: credits });
       }
     }
     if (entries.length === 0) return null;
     return calculateCGPA(entries);
-  }, [sem1Sgpa, sem2Sgpa, sem3Sgpa, sem1Credits, sem2Credits, sem3Credits]);
+  }, [sgpaValues, semesterCredits, semesters]);
 
   const handleBranchSelect = (branchId) => {
     setSelectedBranch(branchId);
@@ -71,27 +84,17 @@ export default function CGPAPage() {
   };
 
   const handleReset = () => {
-    setSem1Sgpa(''); setSem2Sgpa(''); setSem3Sgpa('');
-    setSem1Credits(DEFAULT_CREDITS_SEM1);
-    setSem2Credits(DEFAULT_CREDITS_SEM2);
-    if (selectedBranch) {
-      const c3 = getTotalCredits(selectedBranch, 3);
-      setSem3Credits(c3 > 0 ? c3 : '');
-    }
+    setSgpaValues({});
   };
 
-  const badgeColors = {
-    blue: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300',
-    violet: 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300',
-    indigo: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300',
-  };
+  const maxSem = semesters.length > 0 ? Math.max(...semesters) : 3;
 
   return (
     <div className="space-y-8 py-8">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-100 dark:bg-purple-900/30 text-xs font-medium text-purple-700 dark:text-purple-300">
-          📈 Up to 3rd Semester
+          📈 Up to {ordinalLabels[maxSem - 1]} Semester
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white font-outfit">
           CGPA Calculator
@@ -107,7 +110,7 @@ export default function CGPAPage() {
         <BranchSelector branches={branches} selectedBranch={selectedBranch} onSelect={handleBranchSelect} />
       </motion.section>
 
-      {selectedBranch && (
+      {selectedBranch && semesters.length > 0 && (
         <>
           {/* Semester SGPA Inputs */}
           <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-4">
@@ -122,51 +125,52 @@ export default function CGPAPage() {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {semInputs.map((sem, index) => (
-                <motion.div
-                  key={sem.num}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.25 + index * 0.08 }}
-                  className="p-5 rounded-2xl border border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-800/50 space-y-4 hover:shadow-md transition-shadow"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className={`flex h-9 w-9 items-center justify-center rounded-xl text-sm font-bold ${badgeColors[sem.color]}`}>
-                      {sem.num}
-                    </span>
-                    <h3 className="font-semibold text-gray-800 dark:text-gray-200">{sem.label} Semester</h3>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">
-                      SGPA <span className="text-red-400">*</span>
-                    </label>
-                    <input
-                      id={`sem${sem.num}-sgpa`}
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      max="10"
-                      value={sem.sgpa}
-                      onChange={(e) => sem.setSgpa(e.target.value)}
-                      placeholder="e.g., 7.50"
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm font-medium placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">
-                      Total Credits
-                    </label>
-                    <div
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 text-sm font-semibold cursor-not-allowed"
-                    >
-                      {sem.credits}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {semesters.map((sem, index) => {
+                const color = badgeColorCycle[index % badgeColorCycle.length];
+                return (
+                  <motion.div
+                    key={sem}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.25 + index * 0.08 }}
+                    className="p-5 rounded-2xl border border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-800/50 space-y-4 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className={`flex h-9 w-9 items-center justify-center rounded-xl text-sm font-bold ${badgeColorMap[color]}`}>
+                        {sem}
+                      </span>
+                      <h3 className="font-semibold text-gray-800 dark:text-gray-200">{ordinalLabels[sem - 1]} Semester</h3>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">
+                        SGPA <span className="text-red-400">*</span>
+                      </label>
+                      <input
+                        id={`sem${sem}-sgpa`}
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        max="10"
+                        value={sgpaValues[sem] || ''}
+                        onChange={(e) => setSgpa(sem, e.target.value)}
+                        placeholder="e.g., 7.50"
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm font-medium placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">
+                        Total Credits
+                      </label>
+                      <div className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 text-sm font-semibold cursor-not-allowed">
+                        {semesterCredits[sem] || '—'}
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.section>
 
@@ -194,7 +198,7 @@ export default function CGPAPage() {
                           {sem.semester}
                         </span>
                         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          {semesterLabels[sem.semester - 1]} Semester
+                          {ordinalLabels[sem.semester - 1]} Semester
                         </span>
                       </div>
                       <div className="flex items-center gap-4 sm:gap-6 text-sm flex-wrap">
@@ -210,7 +214,7 @@ export default function CGPAPage() {
               {/* Big CGPA Display */}
               {cgpaResult.cgpa > 0 && (
                 <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="p-6 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-600 text-white text-center shadow-xl shadow-purple-500/30">
-                  <p className="text-sm font-medium opacity-80">Your Overall CGPA (Up to 3rd Semester)</p>
+                  <p className="text-sm font-medium opacity-80">Your Overall CGPA (Up to {ordinalLabels[maxSem - 1]} Semester)</p>
                   <p className="text-5xl font-extrabold font-outfit mt-2">{cgpaResult.cgpa.toFixed(2)}</p>
                   <p className="text-sm mt-2 opacity-70">
                     {cgpaResult.cgpa >= 9 ? '🌟 Outstanding Performance!' : cgpaResult.cgpa >= 8 ? '🎉 Excellent!' : cgpaResult.cgpa >= 7 ? '👏 Very Good!' : cgpaResult.cgpa >= 6 ? '👍 Good Job!' : cgpaResult.cgpa >= 5 ? '📖 Keep Improving!' : '💪 Stay Focused!'}
