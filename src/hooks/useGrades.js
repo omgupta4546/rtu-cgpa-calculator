@@ -33,9 +33,17 @@ export function useGrades(branch, semester) {
     }));
   }, []);
 
+  // Bulk set grades (e.g., from PDF import)
+  const setMultipleGrades = useCallback((gradeMap) => {
+    setGrades(prev => ({
+      ...prev,
+      ...gradeMap,
+    }));
+  }, []);
+
   const resetGrades = useCallback(() => {
     setGrades({});
   }, []);
 
-  return { grades, setGrade, resetGrades };
+  return { grades, setGrade, setMultipleGrades, resetGrades };
 }

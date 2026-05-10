@@ -1,9 +1,10 @@
-import { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useMemo, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import BranchSelector from '../components/BranchSelector';
 import SubjectTable from '../components/SubjectTable';
 import ResultCard from '../components/ResultCard';
-import { branches, getSubjects, availableSemesters } from '../data';
+import PdfUpload from '../components/PdfUpload';
+import { branches, getSubjects, availableSemesters, getSemesterLabel } from '../data';
 import { useGrades } from '../hooks/useGrades';
 import { calculateSGPA } from '../utils/calculator';
 import { saveToStorage, loadFromStorage, STORAGE_KEYS } from '../utils/storage';
@@ -15,8 +16,9 @@ export default function SGPAPage() {
   const [selectedSemester, setSelectedSemester] = useState(() =>
     loadFromStorage('selected_semester_sgpa', 3)
   );
+  const [pdfImportInfo, setPdfImportInfo] = useState(null);
 
-  const { grades, setGrade, resetGrades } = useGrades(selectedBranch, selectedSemester);
+  const { grades, setGrade, setMultipleGrades, resetGrades } = useGrades(selectedBranch, selectedSemester);
 
   const semesters = useMemo(() => {
     if (!selectedBranch) return [];
@@ -36,24 +38,26 @@ export default function SGPAPage() {
   const handleBranchSelect = (branchId) => {
     setSelectedBranch(branchId);
     saveToStorage(STORAGE_KEYS.SELECTED_BRANCH, branchId);
+    setPdfImportInfo(null);
   };
 
   const handleSemesterSelect = (sem) => {
     setSelectedSemester(sem);
     saveToStorage('selected_semester_sgpa', sem);
+    setPdfImportInfo(null);
   };
 
   const handleReset = () => {
     resetGrades();
+    setPdfImportInfo(null);
   };
+
+  const handlePdfGradesExtracted = useCallback((gradeMap, info) => {
+    setMultipleGrades(gradeMap);
+    setPdfImportInfo(info);
+  }, [setMultipleGrades]);
 
   const allGradesSelected = subjects.length > 0 && subjects.every(s => grades[s.code]);
-
-  // Semester label helper
-  const semesterLabel = (sem) => {
-    const ordinal = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th'];
-    return `${ordinal[sem - 1] || sem + 'th'} Semester`;
-  };
 
   return (
     <div className="space-y-8 py-8">
@@ -99,7 +103,7 @@ export default function SGPAPage() {
                       : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 hover:border-indigo-300 dark:hover:border-indigo-600 hover:shadow-md'
                   }`}
                 >
-                  {semesterLabel(sem)}
+                  {getSemesterLabel(sem)}
                   {sem <= 2 && (
                     <span className="block text-[10px] font-normal opacity-70 mt-0.5">Common</span>
                   )}
@@ -110,12 +114,75 @@ export default function SGPAPage() {
         </motion.section>
       )}
 
+      {/* PDF Upload Section */}
+      {selectedBranch && subjects.length > 0 && (
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.18 }}
+          className="space-y-3"
+        >
+          <div className="flex items-center gap-2">
+            <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200">
+              📄 Import from Result PDF
+            </h2>
+            <span className="text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/30 px-2 py-0.5 rounded-full uppercase tracking-wide">
+              New
+            </span>
+          </div>
+          <p className="text-sm text-gray-500 dark:text-gray-400 -mt-1">
+            Upload your RTU result PDF and grades will be auto-filled ✨
+          </p>
+          <PdfUpload
+            onGradesExtracted={handlePdfGradesExtracted}
+            subjects={subjects}
+          />
+          
+          {/* PDF Import Success Toast */}
+          <AnimatePresence>
+            {pdfImportInfo && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                className="rounded-xl border border-indigo-200 dark:border-indigo-800/50 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30 p-4"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="text-xl mt-0.5">🎯</span>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
+                      {pdfImportInfo.matchedCount} out of {pdfImportInfo.totalExtracted} grades auto-filled!
+                    </p>
+                    {pdfImportInfo.studentInfo?.name && (
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        Result of: <span className="font-medium text-gray-700 dark:text-gray-300">{pdfImportInfo.studentInfo.name}</span>
+                      </p>
+                    )}
+                    {pdfImportInfo.unmatchedCodes?.length > 0 && (
+                      <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                        ⚠️ {pdfImportInfo.unmatchedCodes.length} subjects not in current semester: {pdfImportInfo.unmatchedCodes.join(', ')}
+                      </p>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => setPdfImportInfo(null)}
+                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm transition-colors"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.section>
+      )}
+
       {/* Subject Table */}
       {selectedBranch && subjects.length > 0 && (
         <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200">
-              {selectedBranch} — {semesterLabel(selectedSemester)} Subjects
+              {selectedBranch} — {getSemesterLabel(selectedSemester)} Subjects
             </h2>
             <button
               onClick={handleReset}
@@ -161,7 +228,7 @@ export default function SGPAPage() {
 
           {allGradesSelected && result.sgpa > 0 && (
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="p-6 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-center shadow-xl shadow-indigo-500/30">
-              <p className="text-sm font-medium opacity-80">Your {semesterLabel(selectedSemester)} SGPA</p>
+              <p className="text-sm font-medium opacity-80">Your {getSemesterLabel(selectedSemester)} SGPA</p>
               <p className="text-5xl font-extrabold font-outfit mt-2">{result.sgpa.toFixed(2)}</p>
               <p className="text-sm mt-2 opacity-70">
                 {result.sgpa >= 9 ? '🌟 Outstanding!' : result.sgpa >= 8 ? '🎉 Excellent!' : result.sgpa >= 7 ? '👏 Very Good!' : result.sgpa >= 6 ? '👍 Good!' : result.sgpa >= 5 ? '📖 Keep Going!' : '💪 Work Harder!'}

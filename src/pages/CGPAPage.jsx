@@ -2,11 +2,10 @@ import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import BranchSelector from '../components/BranchSelector';
 import ResultCard from '../components/ResultCard';
-import { branches, getTotalCredits, availableSemesters } from '../data';
+import { branches, getTotalCredits, availableSemesters, getSemesterLabel } from '../data';
 import { calculateCGPA } from '../utils/calculator';
 import { saveToStorage, loadFromStorage, STORAGE_KEYS } from '../utils/storage';
 
-const ordinalLabels = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th'];
 const badgeColorCycle = ['blue', 'violet', 'indigo', 'purple', 'cyan', 'teal', 'fuchsia', 'rose'];
 
 // Fixed credits per semester (common semesters)
@@ -94,7 +93,7 @@ export default function CGPAPage() {
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-100 dark:bg-purple-900/30 text-xs font-medium text-purple-700 dark:text-purple-300">
-          📈 Up to {ordinalLabels[maxSem - 1]} Semester
+          📈 Up to {getSemesterLabel(maxSem)}
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white font-outfit">
           CGPA Calculator
@@ -140,7 +139,7 @@ export default function CGPAPage() {
                       <span className={`flex h-9 w-9 items-center justify-center rounded-xl text-sm font-bold ${badgeColorMap[color]}`}>
                         {sem}
                       </span>
-                      <h3 className="font-semibold text-gray-800 dark:text-gray-200">{ordinalLabels[sem - 1]} Semester</h3>
+                      <h3 className="font-semibold text-gray-800 dark:text-gray-200">{getSemesterLabel(sem)}</h3>
                     </div>
 
                     <div>
@@ -198,7 +197,7 @@ export default function CGPAPage() {
                           {sem.semester}
                         </span>
                         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          {ordinalLabels[sem.semester - 1]} Semester
+                          {getSemesterLabel(sem.semester)}
                         </span>
                       </div>
                       <div className="flex items-center gap-4 sm:gap-6 text-sm flex-wrap">
@@ -214,7 +213,7 @@ export default function CGPAPage() {
               {/* Big CGPA Display */}
               {cgpaResult.cgpa > 0 && (
                 <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="p-6 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-600 text-white text-center shadow-xl shadow-purple-500/30">
-                  <p className="text-sm font-medium opacity-80">Your Overall CGPA (Up to {ordinalLabels[maxSem - 1]} Semester)</p>
+                  <p className="text-sm font-medium opacity-80">Your Overall CGPA (Up to {getSemesterLabel(maxSem)})</p>
                   <p className="text-5xl font-extrabold font-outfit mt-2">{cgpaResult.cgpa.toFixed(2)}</p>
                   <p className="text-sm mt-2 opacity-70">
                     {cgpaResult.cgpa >= 9 ? '🌟 Outstanding Performance!' : cgpaResult.cgpa >= 8 ? '🎉 Excellent!' : cgpaResult.cgpa >= 7 ? '👏 Very Good!' : cgpaResult.cgpa >= 6 ? '👍 Good Job!' : cgpaResult.cgpa >= 5 ? '📖 Keep Improving!' : '💪 Stay Focused!'}

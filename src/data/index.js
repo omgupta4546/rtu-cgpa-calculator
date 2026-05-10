@@ -82,3 +82,15 @@ export function getTotalCredits(branch, semester) {
   if (!subjects) return 0;
   return subjects.reduce((sum, sub) => sum + sub.credits, 0);
 }
+
+/**
+ * Get formatted label for a semester.
+ * @param {number} sem 
+ * @returns {string}
+ */
+export function getSemesterLabel(sem) {
+  if (sem === 1) return 'Chemistry Sem';
+  if (sem === 2) return 'Physics Sem';
+  const ordinal = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th'];
+  return `${ordinal[sem - 1] || sem + 'th'} Semester`;
+}
